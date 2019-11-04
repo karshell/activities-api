@@ -13,6 +13,8 @@ namespace Activities.API
 {
     public class Startup
     {
+        private const string CorsPolicyName = "CorsPolicy";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -36,6 +38,13 @@ namespace Activities.API
             services.AddScoped<IPersonService, PersonService>();
             services.AddScoped<IPersonRepository, PersonRepository>();
 
+            services.AddCors(o => o.AddPolicy(CorsPolicyName, builder =>
+            {
+                builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            }));
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
@@ -52,6 +61,7 @@ namespace Activities.API
 
             UpdateDatabase(app);
 
+            app.UseCors(CorsPolicyName);
             app.UseHttpsRedirection();
             app.UseMvc();
         }
